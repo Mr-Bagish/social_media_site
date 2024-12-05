@@ -1,0 +1,258 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="favicon.png" rel="icon" type="image/png">
+    <title>Home</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'assets/css/icons.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/uikit.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/tailwind.css' %}">
+</head>
+
+<body>
+
+    <header class="bg-white shadow-md">
+        <div class="container mx-auto flex justify-between items-center py-4 px-6">
+            <!-- Left Side: Logo & Search -->
+            <div class="flex items-center space-x-8">
+                <!-- Logo -->
+                <div id="logo" class="hidden sm:block">
+                    <a href="home.html">
+                        <h1 class="text-3xl font-bold text-gray-800 uppercase">BG Book</h1>
+                    </a>
+                </div>
+                
+                <!-- Search Form -->
+                <form action="search" method="post" class="flex items-center space-x-2">
+                    {% csrf_token %}
+                    <div class="relative w-full">
+                        <input type="text" placeholder="Search for username..." name="username" class="w-full py-2 px-4 rounded-lg border border-gray-300 focus:ring-2 focus:ring-pink-500">
+                        <div class="absolute top-1/2 transform -translate-y-1/2 right-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 text-gray-600">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <button type="submit" class="hidden">Search</button>
+                </form>
+            </div>
+    
+            <!-- Right Side: Upload & Profile -->
+            <div class="flex items-center space-x-6">
+                <!-- Upload Button -->
+                <a href="#" class="bg-pink-500 text-white px-4 py-2 rounded-lg flex items-center hover:bg-pink-600 transition duration-200">
+                    <ion-icon name="add-circle" class="-mb-1 mr-1 opacity-90 text-xl"></ion-icon> 
+                    Upload Pics / Videos
+                </a>
+                
+                <!-- Upload Dropdown -->
+                <div uk-dropdown="pos: top-right; mode: click; animation: uk-animation-slide-bottom-small" class="header_dropdown">
+                    <div class="px-4 py-3 border-b">
+                        <h4 class="text-lg font-semibold">Upload Pics or Videos</h4>
+                    </div>
+                    <div class="flex justify-center items-center text-center py-4">
+                        <form action="upload" method="post" enctype="multipart/form-data" class="w-full max-w-sm">
+                            {% csrf_token %}
+                            <div class="bg-gray-100 border-2 border-dashed rounded-lg p-8 flex flex-col items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-16 h-16 text-gray-500 mb-4">
+                                    <path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z" />
+                                    <path d="M9 13h2v5a1 1 0 11-2 0v-5z" />
+                                </svg>
+                                <label for="post_image" class="text-gray-600 cursor-pointer">Choose Image</label>
+                                <input type="file" name="post_image" id="post_image" class="mt-2 border border-gray-300 rounded-lg p-2 w-full" />
+                                <textarea name="post_text" class="mt-4 p-2 border border-gray-300 rounded-lg w-full" placeholder="Caption"></textarea>
+                                <button type="submit" class="bg-pink-500 text-white py-2 px-4 rounded-lg mt-4 hover:bg-pink-600 transition duration-200">Upload</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+    
+                <!-- Profile Avatar -->
+                <a href="#">
+                    <img src="{{user_profile.profileimg.url }}" class="w-10 h-10 rounded-full border-2 border-gray-300 hover:ring-2 hover:ring-pink-500 transition duration-200" alt="Profile">
+                </a>
+    
+                <!-- Profile Dropdown -->
+                <div uk-drop="mode: click; offset: 9" class="header_dropdown profile_dropdown border-t">
+                    <ul class="text-gray-700">
+                        <li><a href="{% url 'setting' %}" class="py-2 px-4 hover:bg-gray-100">Account Settings</a></li>
+                        <li><a href="{% url 'signout' %}" class="py-2 px-4 hover:bg-gray-100">Log Out</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+
+            <div class="container m-auto">
+
+                <!--<h1 class="lg:text-2xl text-lg font-extrabold leading-none text-gray-900 tracking-tight mb-5"> Feed </h1>--->
+
+                <div class="lg:flex justify-center lg:space-x-10 lg:space-y-0 space-y-5">
+
+                    <!-- left sidebar-->
+                    <div class="space-y-5 flex-shrink-0 lg:w-7/12">
+                        <!-- post 1-->
+                        {% for post in post_data %}
+                        <div class="bg-white shadow-lg rounded-md -mx-2 lg:mx-0 overflow-hidden">
+                            <!-- post header-->
+                            <div class="flex justify-between items-center px-4 py-3 border-b">
+                                <div class="flex flex-1 items-center space-x-4">
+                                    <a href="#">
+                                        <div class="bg-gradient-to-tr from-yellow-600 to-pink-600 p-0.5 rounded-full">
+                                            <img src="{{ post.profile_img }}" class="bg-gray-200 border border-white rounded-full w-10 h-10">
+                                        </div>
+                                    </a>
+                                    <span class="block capitalize font-semibold text-gray-800">
+                                        <a href="/profile/{{ post.post.user.username }}" class="hover:text-pink-600">{{ post.post.user.username }}</a>
+                                    </span>
+                                </div>
+                            </div>
+                    
+                            <div class="p-4 space-y-3">
+                                <p class="text-gray-800">{{ post.post.text }}</p>
+                                {% if post.post.image %}
+                                <div uk-lightbox>
+                                    <a href="{{ post.post.image.url }}">
+                                        <img src="{{ post.post.image.url }}" alt="Post image" class="w-full rounded-lg shadow-md">
+                                    </a>
+                                </div>
+                                {% endif %}
+                            </div>
+                    
+                            <!-- post actions -->
+                            <div class="py-3 px-4 border-t">
+                                <div class="flex justify-between items-center space-x-4">
+                                    <div class="flex space-x-4 text-gray-700">
+                                        <a href="{% url 'like-post' post.post.id %}" class="flex items-center space-x-2 hover:text-pink-600">
+                                            <div class="p-2 rounded-full">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="25" height="25">
+                                                    <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+                                                </svg>
+                                            </div>
+                                        </a>
+                                        <a href="{% url 'commentlist' post.post.id %}" class="flex items-center space-x-2 hover:text-pink-600">
+                                            <div class="p-2 rounded-full">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="25" height="25">
+                                                    <path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd" />
+                                                </svg>
+                                            </div>
+                                        </a>
+                                        {% if post.post.image %}
+                                        <a href="{{ post.post.image.url }}" class="flex items-center space-x-2 hover:text-pink-600" download>
+                                            <div class="p-2 rounded-full">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="25" height="25">
+                                                    <path d="M8.5 1.5A1.5 1.5 0 0 1 10 0h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h6c-.314.418-.5.937-.5 1.5v6h-2a.5.5 0 0 0-.354.854l2.5 2.5a.5.5 0 0 0 .708 0l2.5-2.5A.5.5 0 0 0 10.5 7.5h-2v-6z" />
+                                                </svg>
+                                            </div>
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                    
+                                    <div class="text-gray-600">
+                                        {% if post.post.no_of_likes == 1 %}
+                                        Liked by <strong>{{ post.post.no_of_likes }}</strong> person
+                                        {% elif post.no_of_likes > 1 %}
+                                        Liked by <strong>{{ post.post.no_of_likes }}</strong> people
+                                        {% else %}
+                                        <strong>No likes</strong>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                    
+                                <!-- comment form -->
+                                <form action="{% url 'comment' post.post.id %}" method="post" class="mt-3">
+                                    {% csrf_token %}
+                                    <div class="bg-gray-100 rounded-full flex items-center">
+                                        <input type="text" name="cmt" placeholder="Post a comment" class="bg-transparent flex-1 py-2 px-4 text-sm rounded-l-full focus:outline-none focus:ring-2 focus:ring-pink-600">
+                                        <button type="submit" class="py-2 px-4 bg-pink-600 text-white rounded-r-full hover:bg-pink-700 transition">Post</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    
+
+                    <!-- right sidebar-->
+                    
+                    <div class="lg:w-5/12">
+
+                        <div class="bg-white  shadow-md rounded-md overflow-hidden">
+
+                            <div class="bg-gray-50  border-b border-gray-100 flex items-baseline justify-between py-4 px-6 ">
+                                <h2 class="font-semibold text-lg">Users You Can Follow</h2>
+                                <a href="#"> Refresh</a>
+                            </div>
+                            {% for userto_follow in userto_follow_profiles %}
+                            
+                            <div class="divide-gray-300 divide-gray-50 divide-opacity-50 divide-y px-4 ">
+                                <div class="flex items-center justify-between py-3">
+                                    <div class="flex flex-1 items-center space-x-4">
+                                        <a href="/profile/{{userto_follow.user.username}}">
+                                            <img src="{{userto_follow.profileimg.url}}" class="bg-gray-200 rounded-full w-10 h-10">
+                                        </a> 
+                                        <div class="flex flex-col">
+                                            <span class="block capitalize font-semibold"> {{userto_follow.user.username}} </span>
+                                            
+                                        </div>
+                                    </div>
+                                    
+                                    
+                                        
+                                    
+                                        
+                                    
+                                    <a href="/profile/{{userto_follow}}" class="py-1 px-4 border border-pink-600 text-pink-600 rounded-full hover:bg-pink-600 hover:text-white hover:border-pink-600 "> View profile </a>
+                                </div>
+
+                            </div>
+                            {% endfor %}
+                            
+                        </div>
+
+                      
+
+                    </div>
+                    
+
+                </div>               
+          
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+
+
+
+
+
+ <!-- Scripts
+    ================================================== -->
+    <script src="{% static 'assets/js/tippy.all.min.js' %}"></script>  
+    <script src="{% static 'assets/js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'assets/js/uikit.js' %}"></script>
+    <script src="{% static 'assets/js/simplebar.js' %}"></script>
+    <script src="{% static 'assets/js/custom.js' %}"></script>
+
+
+    <script src="{% static '../../unpkg.com/ionicons%405.2.3/dist/ionicons.js' %}"></script>
+</body>
+
+
+</html>

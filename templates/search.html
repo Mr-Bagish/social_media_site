@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search user</title>
+</head>
+<body>
+    <div>
+        {% if profiles %}
+            <h2>Results:</h2>
+            <ul>
+                {% for profile in profiles %}
+                    <li>
+                        <img src="{{ profile.profileimg.url }}" alt="Profile Image" width="50">
+                        <strong>{{ profile.user.username }}</strong>
+                        <p>{{ profile.bio }}</p>
+                        <p>Location: {{ profile.location }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No profiles found.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
