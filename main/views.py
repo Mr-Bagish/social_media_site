@@ -9,38 +9,52 @@ from django.contrib.auth.decorators import login_required
 
 @login_required(login_url='signin')
 def index(request):
-    # Get the currently logged-in user
+
     user_d = User.objects.get(username=request.user.username)
-    
-    # Get the logged-in user's profile
     user_profile = Profile.objects.get(user=user_d)
-    
-    # Get the usernames of users the current user is following
-    user_following = Followers.objects.filter(follower=user_d).values_list('username', flat=True)
-    
-    # Get the posts created by the users being followed
-    posts = Post.objects.filter(user__username__in=user_following).order_by('-created_at')
-    
-    # Prepare post data with profile image for each post
+
+    user_following = Followers.objects.filter(
+        follower=user_d
+    ).values_list('username', flat=True)
+
+    posts = Post.objects.filter(
+        user__username__in=user_following
+    ).order_by('-created_at')
+
+    liked_posts = set(
+        Likepost.objects.filter(
+            username=request.user.username
+        ).values_list('post_id', flat=True)
+    )
+
     post_data = []
+
     for post in posts:
-        profile_img = Profile.objects.get(user=post.user).profileimg.url
         post_data.append({
             'post': post,
-            'profile_img': profile_img
+            'profile_img': Profile.objects.get(user=post.user).profileimg.url,
+            'is_liked': str(post.id) in liked_posts
         })
-    
-    # Get users to suggest for following (exclude already followed users, self, and superuser)
-    userto_follow = User.objects.exclude(username__in=user_following).exclude(username=user_d.username).exclude(is_superuser=True)
-    userto_follow_profiles = Profile.objects.filter(user__in=userto_follow)
-    
-    # Prepare data to send to the template
+
+
+    userto_follow = User.objects.exclude(
+        username__in=user_following
+    ).exclude(
+        username=user_d.username
+    ).exclude(
+        is_superuser=True
+    )
+
+    userto_follow_profiles = Profile.objects.filter(
+        user__in=userto_follow
+    )
+
     data = {
-        'user_profile': user_profile,          # Logged-in user's profile
-        'post_data': post_data,                # Posts with profile images
-        'userto_follow_profiles': userto_follow_profiles,  # Suggested users with profiles
+        'user_profile': user_profile,
+        'post_data': post_data,
+        'userto_follow_profiles': userto_follow_profiles,
     }
-    
+
     return render(request, 'index.html', data)
 
 def commentlist(request , post_id):
@@ -86,6 +100,8 @@ def upload(request):
         user=User.objects.get(username=request.user.username)
         image=request.FILES.get("post_image")
         text=request.POST.get('post_text')
+        if not image and not text:
+            return redirect('/')  # or show message
         user_post=Post.objects.create(user=user,image=image,text=text)
         user_post.save()
         return redirect('/')
@@ -139,31 +155,49 @@ def follower(request):
         return redirect('/')
 
 def signup(request):
-    if request.method=="POST":
-        username=request.POST['username']
-        email=request.POST['email']
-        password=request.POST['password']
-        password1=request.POST['password1']
-        if password==password1:
-            if User.objects.filter(email=email).exists():
-                messages.info(request,'Email Already Exists')
-                return redirect('signup')
-            elif User.objects.filter(username=username).exists():
-                messages.info(request,"Username already exists")
-                return redirect('signup')
-            else:
-                user=User.objects.create_user(username=username,email=email,password=password1)
-                user.save()
-                user=authenticate(username=username,password=password)
-                login(request,user)
-                #saving user and creating new profile accordingly
-                user_model=User.objects.get(username=username)
-                new_profile=Profile.objects.create(user=user_model,id_user=user_model.id)
-                new_profile.save()
-                return redirect('setting')
-        else:
+    if request.method == "POST":
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        password1 = request.POST.get('password1')
+
+        # 1. Empty field check (MUST be first)
+        if not username or not email or not password or not password1:
+            messages.info(request, "All fields are required")
+            return redirect('signup')
+
+        # 2. Password match check
+        if password != password1:
             messages.info(request, "Password didn't match.")
             return redirect('signup')
+
+        # 3. Email exists check
+        if User.objects.filter(email=email).exists():
+            messages.info(request, "Email already exists")
+            return redirect('signup')
+
+        # 4. Username exists check
+        if User.objects.filter(username=username).exists():
+            messages.info(request, "Username already exists")
+            return redirect('signup')
+
+        # 5. Create user
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password
+        )
+
+        # 6. Login user
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            login(request, user)
+
+        # 7. Create profile
+        Profile.objects.create(user=user, id_user=user.id)
+
+        return redirect('setting')
+
     return render(request, 'signup.html')
 
 def signin(request):

@@ -2,164 +2,144 @@
 
 <!DOCTYPE html>
 <html lang="en">
-
-
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="" />
-    <meta name="keywords" content="" />
-	<title>Profile - {{user_profile.user.username}}</title>
-   <!-- <link rel="icon" href="images/fav.png" type="image/png" sizes="16x16"> -->
-    
-    <link rel="stylesheet" href="{% static 'css/main.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/color.css' %}">
-    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+    <title>{{ user_profile.user.username }} | Profile</title>
 
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-<!--<div class="se-pre-con"></div>-->
-<div class="theme-layout">
-	
-	</div>
-	
-	<section>
-			<div class="feature-photo">
-				<figure><img src="https://namefbcovers.com/photos/images/covers/850/itm_simple-time-cover-photos-for-fb2014-02-02_09-34-34_1.jpg" style="height:300px; width:1500px" alt=""></figure>
-				<form action="/follow" method="POST">
-					{% csrf_token %}
-					<div class="add-btn">
-					<span style="color: white; font-size: 27px; margin-right: 520px;"><b><u><a href="/">Home</a></u></b></span>
-					<span style="color: white; font-size: 27px;"><b>{{user_post_length}} Post</b></span>
-					<span style="color: white; font-size: 27px;"><b>{{follower_c}} followers</b></span>
-					<span style="color: white; font-size: 27px;"><b>{{following_c}} following</b></span>
-					<input type="hidden" name="username" value="{{user_profile.user.username}}">
-					<input type="hidden" name="follower" value="{{user.username}}">
-					{% if user_profile.user.username == user.username %}
-					<a href="{% url "index" %}" title="" data-ripple=""><button style="background-color: #ffc0cb; border: #ffc0cb;">Go back</button></a>
-					{% else %}
-					<a title="" data-ripple=""><button type="submit" style="background-color: #ffc0cb; border: #ffc0cb;">{{button_txt}}</button></a>
-					{% endif %}
-					</div>
-				</form>
 
-				<!-- <form class="edit-phto">
-					<i class="fa fa-camera-retro"></i>
-					<label class="fileContainer">
-						Upload Cover Photo
-					<input type="file"/>
-					</label>
-				</form> -->
-				<div class="container-fluid">
-					<div class="row merged">
-						<div class="col-lg-2 col-sm-3">
-							<div class="user-avatar">
-								<figure>
-									<img src="{{user_profile.profileimg.url}}" style="height: 200px; width: 100%;" alt="">
-									<form class="edit-phto">
-										<i class="fa fa-camera-retro"></i>
-										<label class="fileContainer">
-											<a href="{% url "setting" %}">Upload Profile Photo</a>
-										</label>
-									</form>
-								</figure>
-							</div>
-						</div>
-						<div class="col-lg-10 col-sm-9">
-							<div class="timeline-info">
-								<ul>
-									<li class="admin-name">
-									  <h5 style="color: black;white-space: nowrap; width: 110px; font-size: 27px;"><b>{{user_profile.user.username}}</b><!--<i class="fa fa-check-circle" style="color: #48dbfb;" aria-hidden="true"></i>--></h5>
-									  <!--<span>Group Admin</span>-->
-									</li>
-									<!--<li>
-										<a class="" href="javascript:void(0)" title="" data-ripple="">Go live!</a>
-										<a class="" href="javascript:void(0)" title="" data-ripple="">Music</a>
-										<a class="" href="emporium/index-3.html" title="" data-ripple="">Emporium</a>
-										<a class="" href="fitness/index.html" title="" data-ripple="">Health Inspection</a>
-										<a class="" href="settings/account-setting.html" title="" data-ripple="">Settings</a>
-										<a class="" href="javascript:void(0)" title="" data-ripple="">Upload</a>
-										<a class="" href="time-line.html" title="" data-ripple="">time line</a>
-										<a class="" href="timeline-photos.html" title="" data-ripple="">Photos</a>
-										<a class="" href="timeline-videos.html" title="" data-ripple="">Videos</a>
-										<a class="" href="timeline-friends.html" title="" data-ripple="">Friends</a>
-										<a class="" href="timeline-groups.html" title="" data-ripple="">Groups</a>
-										<a class="" href="about.html" title="" data-ripple="">about</a>
-										<a class="" href="#" title="" data-ripple="">more</a>
+<body class="bg-gray-100">
 
-									</li>-->
-								</ul>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section><!-- top area -->
-		<section>
-			<div class="bio">
-				{{user_profile.bio}}
-			</div>
-		</section>
-		
-	<section>
-		<div class="gap gray-bg">
-			<div class="container-fluid">
-				<div class="row">
-					<div class="col-lg-12">
-						<div class="row" id="page-contents">
-							<div class="col-lg-3">
-								<aside class="sidebar static">
-									
-									
-									
-								</aside>
-							</div><!-- sidebar -->
-							
+<!-- NAV -->
+<div class="max-w-5xl mx-auto mt-4 px-4 flex justify-between items-center">
+    <a href="/" class="text-sm bg-gray-800 text-white px-3 py-1 rounded-lg">
+        ← Home
+    </a>
+</div>
+
+<!-- PROFILE CARD -->
+<div class="max-w-4xl mx-auto mt-10 px-4">
+
+    <div class="bg-white shadow rounded-2xl p-6">
+
+        <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
+
+            <!-- PROFILE IMAGE -->
+            <img src="{{ user_profile.profileimg.url }}"
+                 class="w-32 h-32 rounded-full object-cover border-4 border-white shadow">
+
+            <!-- USER INFO -->
+            <div class="flex-1 text-center md:text-left">
+
+                <h1 class="text-2xl font-bold">
+                    {{ user_profile.user.username }}
+                </h1>
+
+                <p class="text-gray-600 mt-2">
+                    {{ user_profile.bio|default:"No bio yet" }}
+                </p>
+
+                <p class="text-sm text-gray-400 mt-1">
+                    📍 {{ user_profile.location|default:"Unknown location" }}
+                </p>
+
+                <!-- STATS -->
+                <div class="flex justify-center md:justify-start gap-6 mt-4 text-sm text-gray-600">
+                    <span><b>{{ user_post_length }}</b> Posts</span>
+                    <span><b>{{ follower_c }}</b> Followers</span>
+                    <span><b>{{ following_c }}</b> Following</span>
+                </div>
+
+            </div>
+
+            <!-- BUTTON -->
+            <div>
+
+                <form action="/follow" method="POST">
+                    {% csrf_token %}
+
+                    <input type="hidden" name="username" value="{{ user_profile.user.username }}">
+                    <input type="hidden" name="follower" value="{{ user.username }}">
+
+                    {% if user_profile.user.username == user.username %}
+                        <a href="{% url 'setting' %}"
+                           class="bg-pink-400 text-white px-4 py-2 rounded-lg">
+                            Edit Profile
+                        </a>
+                    {% else %}
+                        <button type="submit"
+                                class="bg-pink-400 text-white px-4 py-2 rounded-lg">
+                            {{ button_txt }}
+                        </button>
+                    {% endif %}
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
 
 
+<!-- POSTS -->
+<div class="max-w-5xl mx-auto mt-10 px-4">
 
+    <h2 class="text-xl font-semibold mb-4">Posts</h2>
 
+    <div class="space-y-4">
 
+        {% for post in user_posts %}
 
+        <div class="bg-white rounded-xl shadow p-4">
 
+            <!-- USER HEADER -->
+            <div class="flex items-center gap-3 mb-3">
 
+                <img src="{{ user_profile.profileimg.url }}"
+                     class="w-10 h-10 rounded-full object-cover">
 
-							<div class="col-lg-6">
-								<div class="central-meta">
-									<ul class="photos">
-										
-										{%for post in user_posts%}
-										{%if post.image%}
-										<li>
-											<a class="strip" href="{{post.image.url}}" title="" data-strip-group="mygroup" data-strip-group-options="loop: false">
-												<img src="{{post.image.url}}" style="height: 100%; width: 100%;" alt=""></a>
-										</li>
-										{%endif%}
-										{%endfor%}	
-										
-									</ul>
-									<!--<div class="lodmore"><button class="btn-view btn-load-more"></button></div>-->
-								</div><!-- photos -->
-							</div><!-- centerl meta -->
-							<div class="col-lg-3">
-								<aside class="sidebar static">
-									
-								</aside>
-							</div><!-- sidebar -->
-						</div>	
-					</div>
-				</div>
-			</div>
-		</div>	
-	</section>
+                <div>
+                    <p class="font-semibold text-sm">
+                        {{ user_profile.user.username }}
+                    </p>
 
-	
-	
-	<script data-cfasync="false" src="{% static '../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js' %}"></script><script src="{% static 'js/main.min.js' %}"></script>
-	<script src="{% static 'js/script.js' %}"></script>
+                    <p class="text-xs text-gray-400">
+                        {{ post.created_at }}
+                    </p>
+                </div>
 
-</body>	
+            </div>
 
+            <!-- STATUS TEXT -->
+            {% if post.text %}
+                <p class="text-gray-700 mb-3">
+                    {{ post.text }}
+                </p>
+            {% endif %}
 
+            <!-- IMAGE -->
+            {% if post.image %}
+                <img src="{{ post.image.url }}"
+                     class="w-full rounded-lg object-cover max-h-[400px]">
+            {% endif %}
+
+            <!-- ACTIONS (optional UI placeholder) -->
+            <div class="flex gap-4 mt-3 text-sm text-gray-500">
+
+                <span>❤️ {{ post.no_of_likes }}</span>
+                <span>💬 Comments</span>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+</div>
+
+</body>
 </html>

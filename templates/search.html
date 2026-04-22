@@ -4,24 +4,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search user</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <div>
-        {% if profiles %}
-            <h2>Results:</h2>
-            <ul>
-                {% for profile in profiles %}
-                    <li>
-                        <img src="{{ profile.profileimg.url }}" alt="Profile Image" width="50">
-                        <strong>{{ profile.user.username }}</strong>
-                        <p>{{ profile.bio }}</p>
-                        <p>Location: {{ profile.location }}</p>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>No profiles found.</p>
-        {% endif %}
-    </div>
+
+<body class="bg-gray-100">
+
+<div class="max-w-xl mx-auto mt-8 px-4">
+
+    <h2 class="text-2xl font-bold text-center mb-6">Search Results 🔍</h2>
+
+    {% if profiles %}
+
+        <div class="space-y-3">
+
+            {% for profile in profiles %}
+            
+            <a href="{% url 'profile' profile.user.username %}" 
+               class="flex items-center gap-4 bg-white p-4 rounded-2xl shadow hover:shadow-md transition">
+
+                <!-- Profile Image -->
+                <img src="{{ profile.profileimg.url }}" 
+                     class="w-14 h-14 rounded-full object-cover border">
+
+                <!-- Info -->
+                <div class="flex-1">
+                    <p class="font-semibold text-gray-900">
+                        {{ profile.user.username }}
+                    </p>
+
+                    <p class="text-sm text-gray-500 truncate">
+                        {{ profile.bio|default:"No bio yet" }}
+                    </p>
+
+                    <p class="text-xs text-gray-400">
+                        📍 {{ profile.location|default:"Unknown" }}
+                    </p>
+                </div>
+
+                <!-- Arrow -->
+                <div class="text-gray-400">
+                    →
+                </div>
+
+            </a>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+        <p class="text-center text-gray-500 mt-10">
+            No profiles found 😢
+        </p>
+    {% endif %}
+
+</div>
+
 </body>
 </html>
