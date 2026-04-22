@@ -21,14 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-8lpsm=py+_@k4l7tp(7hzgdf^f3p@9!7e+j&e*tcn0hr%&6lk#'
+# 🔐 SECURITY
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG") == "True"
 
-ALLOWED_HOSTS = ["*"]
-
+ALLOWED_HOSTS = ["bg-book.onrender.com"]
 
 # Application definition
 
@@ -83,8 +81,14 @@ WSGI_APPLICATION = 'socialapp.wsgi.application'
 #     }
 # }
 
+# DATABASES = {
+#     'default': dj_database_url.parse(os.environ.get("DATABASE_URL", "postgresql://bg_book_user:lqyQNlkjO68FsEIQa65D1pC1qaKHFdcg@dpg-cta8070gph6c73elmudg-a.oregon-postgres.render.com/bg_book"))
+# }
+
 DATABASES = {
-    'default': dj_database_url.parse(os.environ.get("DATABASE_URL", "postgresql://bg_book_user:lqyQNlkjO68FsEIQa65D1pC1qaKHFdcg@dpg-cta8070gph6c73elmudg-a.oregon-postgres.render.com/bg_book"))
+    'default': dj_database_url.config(
+        default=os.environ.get("DATABASE_URL")
+    )
 }
 
 
